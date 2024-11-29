@@ -28,7 +28,7 @@ jobs:
 
       # Step 3: Check the SonarQube quality gate status
       - name: Check SonarQube quality gate
-        uses: sonarsource/sonarqube-quality-gate-action@v2  # Use the stable v2 release
+        uses: sonarsource/sonarqube-quality-gate-action@master  # Use the stable v2 release
         timeout-minutes: 5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # SonarQube token for quality gate check
