@@ -21,10 +21,11 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      # Create the SSH tunnel to your remote server and forward the port
-      - name: SSH tunnel
+      - name: Create SSH Tunnel to SonarQube Server
         run: |
-          ssh -o StrictHostKeyChecking=no -f -N -L 9000:10.2.2.121:9000 stnl@202.65.116.9 -p 2224
+          nohup ssh -o StrictHostKeyChecking=no -f -N -L 9000:10.2.2.121:9000 stnl@202.65.116.9 -p 2224 &
+          sleep 5  # Wait for tunnel to establish
+
           
       - uses: sonarsource/sonarqube-scan-action@v3
         env:
