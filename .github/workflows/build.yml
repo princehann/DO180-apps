@@ -3,32 +3,19 @@ name: Build
 on:
   push:
     branches:
-      - master  # Trigger the action on push to the 'master' branch
+      - master
+
 
 jobs:
   build:
     name: Build and analyze
-    runs-on: ubuntu-latest  # Run on the latest Ubuntu runner
+    runs-on: ubuntu-latest
     
     steps:
-      # Step 1: Check out the code from the repository
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Disable shallow clones for more accurate analysis
-      
-      # Step 2: Run SonarQube scan
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - uses: sonarsource/sonarqube-scan-action@v3
-        with:
-          sonar-project-key: ${{ secrets.SONAR_PROJECT_KEY }}  # Specify the project key
-          sonar-project-name: "MyProject"  # Optionally specify the project name
-          sonar-project-version: "1.0"  # Optionally specify the version
-          sonar-host-url: ${{ secrets.SONAR_HOST_URL }}  # SonarQube server URL
-          sonar-token: ${{ secrets.SONAR_TOKEN }}  # Authentication token
-          sonar-args: "-X"  # Enable debug output for troubleshooting
-
-      # Step 3: Check the SonarQube quality gate status
-      - name: Check SonarQube quality gate
-        uses: sonarsource/sonarqube-quality-gate-action@master  # Use the stable v2 release
-        timeout-minutes: 5
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # SonarQube token for quality gate check
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
