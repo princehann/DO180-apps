@@ -3,26 +3,32 @@ name: Build
 on:
   push:
     branches:
-      - master
-
+      - master  # Trigger the action on push to the 'master' branch
 
 jobs:
   build:
     name: Build and analyze
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Run on the latest Ubuntu runner
     
     steps:
+      # Step 1: Check out the code from the repository
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0  # Disable shallow clones for more accurate analysis
+      
+      # Step 2: Run SonarQube scan
       - uses: sonarsource/sonarqube-scan-action@v3
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-          sonar-args: "-X"
-      # If you wish to fail your job when the Quality Gate is red, uncomment the
-      # following lines. This would typically be used to fail a deployment.
-      - uses: sonarsource/sonarqube-quality-gate-action@master
+        with:
+          sonar-project-key: ${{ secrets.SONAR_PROJECT_KEY }}  # Specify the project key
+          sonar-project-name: "MyProject"  # Optionally specify the project name
+          sonar-project-version: "1.0"  # Optionally specify the version
+          sonar-host-url: ${{ secrets.SONAR_HOST_URL }}  # SonarQube server URL
+          sonar-token: ${{ secrets.SONAR_TOKEN }}  # Authentication token
+          sonar-args: "-X"  # Enable debug output for troubleshooting
+
+      # Step 3: Check the SonarQube quality gate status
+      - name: Check SonarQube quality gate
+        uses: sonarsource/sonarqube-quality-gate-action@v2  # Use the stable v2 release
         timeout-minutes: 5
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # SonarQube token for quality gate check
